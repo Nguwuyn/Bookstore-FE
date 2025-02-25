@@ -1,1 +1,1 @@
-# Bookstore-FE
+# This repo is for running admin UI
