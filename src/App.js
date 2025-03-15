@@ -1,4 +1,3 @@
-
 import './css/sb-admin-2.css';
 import React, { useEffect } from "react";
 import Revenue from './components/Revenue/Revenue';
@@ -15,6 +14,7 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
+    Redirect
 } from 'react-router-dom';
 import AuthPage from './pages/auth/AuthPage';
 import Common from './pages/common/Common';
@@ -31,6 +31,7 @@ import editProfile from './pages/profile/editProfile';
 import { PostPage } from './pages/post/PostPage';
 import { AddPostPage } from './pages/post/AddPostPage';
 import { EditPostPage } from './pages/post/EditPostPage';
+
 function App() {
     const dispatch = useDispatch();
     useEffect(() => {
@@ -49,14 +50,17 @@ function App() {
             }
         }
         getCurrentUser();
-    }, [])
+    }, [dispatch]);
+
     return (
         <Router>
             <Switch>
                 <Route path="/login" exact>
                     <AuthPage />
                 </Route>
-                <PrivateRoute path="/" exact />
+                {/* Redirect to Dashboard */}
+                <Redirect from="/" to="/dashboard" exact/>
+                <PrivateRoute path="/dashboard" exact component={Dashboard} layout={Common} />
                 {/* Product */}
                 <PrivateRoute path="/product/list" exact component={ListProductPage} layout={Common} />
                 <PrivateRoute path="/product/edit/:productID" component={EditProductPage} layout={Common} />
@@ -68,18 +72,16 @@ function App() {
                 {/* Orders */}
                 <PrivateRoute path="/orders" exact component={OrdersPage} layout={Common} />
                 {/* Revenue */}
-                <PrivateRoute path="/Revenue" exact component={Revenue} layout={Common} />
-                {/* Dashboard */}
-                <PrivateRoute path="/Dashboard" exact component={Dashboard} layout={Common} />
+                <PrivateRoute path="/revenue" exact component={Revenue} layout={Common} />
                 {/* Code */}
                 <PrivateRoute path="/code" exact component={CodePage} layout={Common} />
                 {/* Profile */}
                 <PrivateRoute path="/profile" exact component={Profile} layout={Common} />
                 <PrivateRoute path="/profile/edit" exact component={editProfile} layout={Common} />
                 {/* Blog */}
-                <PrivateRoute path="/Blog" exact component={PostPage} layout={Common} />
-                <PrivateRoute path="/Blog/add" exact component={AddPostPage} layout={Common} />
-                <PrivateRoute path="/Blog/:id" exact component={EditPostPage} layout={Common} />
+                <PrivateRoute path="/blog" exact component={PostPage} layout={Common} />
+                <PrivateRoute path="/blog/add" exact component={AddPostPage} layout={Common} />
+                <PrivateRoute path="/blog/:id" exact component={EditPostPage} layout={Common} />
                 <Route path="*" exact component={NotFound}></Route>
             </Switch>
             <ToastContainer />

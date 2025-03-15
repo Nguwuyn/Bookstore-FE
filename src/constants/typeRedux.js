@@ -7,3 +7,4 @@ export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const GET_ALL_USERS = "GET_ALL_USERS";
 export const DELETE_ONE_USER = "DELETE_ONE_USER";
 export const TOGGLE_NAVBAR = "TOGGLE_NAVBAR";
+export const SET_TOTAL_USERS = 'SET_TOTAL_USERS';

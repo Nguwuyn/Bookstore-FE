@@ -9,6 +9,7 @@ export const getAllProduct = (products) => {
     };
 }
 
+//Thay đổi trạng thái của modal
 export const onToggleModal = (bool) => {
     return {
         type: types.TOGGLE_MODAL,
@@ -16,13 +17,14 @@ export const onToggleModal = (bool) => {
     }
 }
 
+//Cập nhật trạng thái đăng nhập
 export const isLogin = (bool) => {
     return {
         type: types.IS_LOGIN,
         bool
     }
 }
-
+//Lưu trữ thông tin người dùng trong Redux store
 export const setUser = (user) => {
     return {
         type: types.SET_USER,
@@ -60,9 +62,15 @@ export const deleteOneUser = (id) => {
     }
 }
 
-
+//Thay đổi trạng thái của navbar (mở hoặc đóng)
 export const toggleNavbar = () => {
     return {
         type: types.TOGGLE_NAVBAR
     }
 }
+
+//Cập nhật tổng số người dùng trong Redux store
+export const setTotalUsers = (total) => ({
+  type: types.SET_TOTAL_USERS,
+  payload: total,
+});

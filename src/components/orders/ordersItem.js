@@ -15,10 +15,10 @@ function OrdersItem(props) {
                     onChange={(e) => handleChangeStatusOrders(e, order._id)}
                     defaultValue={order.status}
                 >
-                    <option value={0} >Chờ xác nhận</option>
-                    <option value={1} >Đã xác nhận</option>
-                    <option value={2} >Đang giao hàng</option>
-                    <option value={3} >Đã giao hàng</option>
+                    <option value={0}>Chờ xác nhận</option>
+                    <option value={1}>Đã xác nhận</option>
+                    <option value={2}>Đang giao hàng</option>
+                    <option value={3}>Đã giao hàng</option>
                 </select>
             </td>
             <td className="text-center">
@@ -26,7 +26,7 @@ function OrdersItem(props) {
                     onClick={() => handleDetailsOrders(order, true)}
                     className="details-order"
                 >
-                    <i class="fas fa-info-circle"></i>
+                    <i className="fas fa-info-circle"></i>
                 </span>
             </td>
         </tr>

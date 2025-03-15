@@ -3,12 +3,14 @@ import { URL_API } from '../../constants/config';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import Spinners from '../../components//Spinners';
+import Spinners from '../../components/Spinners';
 import { useHistory } from 'react-router';
+
 function CreateUserPage(props) {
     const history = useHistory();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [isLoad, setIsLoad] = useState(false);
+
     const onSubmitForm = (data) => {
         setIsLoad(true);
         axios({
@@ -33,6 +35,7 @@ function CreateUserPage(props) {
                 console.log(err);
             })
     }
+
     return (
         <div className="tm-block-col tm-col-account-settings">
             <div className="tm-bg-primary-dark tm-block tm-block-settings">
@@ -41,51 +44,95 @@ function CreateUserPage(props) {
                     className="tm-signup-form row"
                     onSubmit={handleSubmit(onSubmitForm)}>
                     <div className="form-group col-lg-6">
-                        <label for="name">Họ</label>
+                        <label htmlFor="firstName">Họ</label>
                         <input
-                            id="name"
+                            id="firstName"
                             name="firstName"
                             type="text"
                             className="form-control validate"
-                            {...register("firstName", { required: true })}
+                            {...register("firstName", {
+                                required: "Vui lòng nhập trường này",
+                                pattern: {
+                                    value: /^[A-Za-zÀ-ỹ][A-Za-zÀ-ỹ\s]*$/,
+                                    message: "Phải bắt đầu bằng chữ và không có kí tự đặc biệt và số"
+                                },
+                                maxLength: {
+                                    value: 20,
+                                    message: "Độ dài bé hơn 20 kí tự"
+                                }
+                            })}
                         />
-                        {errors.firstName && <span style={{ color: "red" }}>Vui lòng nhập trường này</span>}
+                        {errors.firstName && <span style={{ color: "red" }}>{errors.firstName.message}</span>}
                     </div>
                     <div className="form-group col-lg-6">
-                        <label for="name">Tên</label>
+                        <label htmlFor="lastName">Tên</label>
                         <input
-                            id="name"
+                            id="lastName"
                             name="lastName"
                             type="text"
                             className="form-control validate"
-                            {...register("lastName", { required: true })}
+                            {...register("lastName", {
+                                required: "Vui lòng nhập trường này",
+                                pattern: {
+                                    value: /^[A-Za-zÀ-ỹ][A-Za-zÀ-ỹ\s]*$/,
+                                    message: "Phải bắt đầu bằng chữ và không có kí tự đặc biệt và số"
+                                },
+                                maxLength: {
+                                    value: 20,
+                                    message: "Độ dài bé hơn 20 kí tự"
+                                }
+                            })}
                         />
-                        {errors.lastName && <span style={{ color: "red" }}>Vui lòng nhập trường này</span>}
+                        {errors.lastName && <span style={{ color: "red" }}>{errors.lastName.message}</span>}
                     </div>
                     <div className="form-group col-lg-6">
-                        <label for="email">Email</label>
+                        <label htmlFor="email">Email</label>
                         <input
                             id="email"
                             name="email"
                             type="email"
                             className="form-control validate"
-                            {...register("email", { required: true })}
+                            {...register("email", { 
+                                required: "Vui lòng nhập trường này",
+                                pattern: {
+                                    value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-àáâãèéêìíòóôõùúăđĩũơưạ-ỹ]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                                    message: "Email không đúng định dạng"
+                                },
+                                maxLength: {
+                                    value: 30,
+                                    message: "Địa chỉ email không quá 30 kí tự"
+                                }
+                            })}
                         />
-                        {errors.email && <span style={{ color: "red" }}>Vui lòng nhập trường này</span>}
+                        {errors.email && <span style={{ color: "red" }}>{errors.email.message}</span>}
                     </div>
                     <div className="form-group col-lg-6">
-                        <label for="password">Password</label>
+                        <label htmlFor="password">Password</label>
                         <input
                             id="password"
                             name="password"
                             type="password"
                             className="form-control validate"
-                            {...register("password", { required: true, minLength: 6 })}
+                            {...register("password", { 
+                                required: "Vui lòng nhập trường này", 
+                                minLength: {
+                                    value: 6,
+                                    message: "Mật khẩu phải chứa ít nhất 6 ký tự"
+                                },
+                                maxLength: {
+                                    value: 12,
+                                    message: "Mật khẩu không được vượt quá 12 ký tự"
+                                },
+                                pattern: {
+                                    value: /^(?=.*[A-Za-zÀ-ỹ])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-zÀ-ỹ\d@$!%*#?&]{8,12}$/,
+                                    message: "Mật khẩu phải chứa chữ cái, số và ký tự đặc biệt"
+                                }
+                            })}
                         />
-                        {errors.password && <span style={{ color: "red" }}>Mật khẩu phải trên 6 ký tự</span>}
+                        {errors.password && <span style={{ color: "red" }}>{errors.password.message}</span>}
                     </div>
                     <div className="form-group col-lg-6">
-                        <label for="password2">Quyền</label>
+                        <label htmlFor="role">Quyền</label>
                         <select
                             {...register("role", { required: true })}
                             className="custom-select" style={{ border: "1px solid black", outline: "none" }}>
@@ -94,15 +141,28 @@ function CreateUserPage(props) {
                         </select>
                     </div>
                     <div className="form-group col-lg-6">
-                        <label for="phone">Phone</label>
+                        <label htmlFor="phone">Phone</label>
                         <input
                             id="phone"
                             name="phone"
                             type="tel"
                             className="form-control validate"
-                            {...register("phone", { required: true })}
+                            {...register("phone", { 
+                                required: "Vui lòng nhập trường này",
+                                pattern: {
+                                    value: /^[0-9]+$/,
+                                    message: "Số điện thoại chỉ chứa số"
+                                },
+                                minLength: {
+                                    value: 10,
+                                    message: "Số điện thoại phải có ít nhất 10 số"
+                                },
+                                maxLength: {
+                                    value: 10,
+                                    message: "Số điện thoại không được vượt quá 10 số"
+                                } })}
                         />
-                        {errors.firstName && <span style={{ color: "red" }}>Vui lòng nhập trường này</span>}
+                        {errors.phone && <span style={{ color: "red" }}>{errors.phone.message}</span>}
                     </div>
                     <div className="col-12">
                         <button
@@ -111,12 +171,11 @@ function CreateUserPage(props) {
                         >
                             {isLoad ? <Spinners /> : ''}
                             Tạo tài khoản
-              </button>
+                        </button>
                     </div>
                 </form>
             </div>
-        </div >
-
+        </div>
     );
 }
 

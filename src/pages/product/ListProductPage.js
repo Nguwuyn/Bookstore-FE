@@ -8,6 +8,7 @@ import ReactPaginate from 'react-paginate';
 import AddProduct from '../../components/product/AddProduct';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
 function ProductPage(props) {
     const dispatch = useDispatch();
     const products = useSelector((state) => state.products);
@@ -23,16 +24,20 @@ function ProductPage(props) {
         page: 1,
         limit: 5
     });
+
     const handleShowModal = () => {
         dispatch(onToggleModal(true))
     }
+
     const handleCloseModal = () => {
         dispatch(onToggleModal(false))
     }
+
     const onChangeSelect = (e) => {
         let value = e.target.value;
         handleChangeLimit(value);
     }
+
     function fetchAllTypeAndNxb() {
         axios.get(`${URL_API}/tn/type`)
             .then(res => res.data)
@@ -45,6 +50,7 @@ function ProductPage(props) {
                 setNxb(data.nxb);
             })
     }
+
     function fetchProduct() {
         setIsLoadingPage(true);
         const config = {
@@ -60,14 +66,17 @@ function ProductPage(props) {
                 dispatch(getAllProduct(Object.values(data.products)))
             })
     }
+
     const handleRsForm = (bool) => {
         setRsForm(bool);
     }
+
     useEffect(() => {
         fetchAllTypeAndNxb();
         let unsubcribe = fetchProduct();
         return unsubcribe;
     }, [page, updateProduct])
+
     const handleAddProduct = (data, files) => {
         setLoadingBtn(true);
         const formData = new FormData();
@@ -103,6 +112,7 @@ function ProductPage(props) {
                 dispatch(onToggleModal(false));
             });
     }
+
     const handleDeleteProduct = (id) => {
         const token = sessionStorage.getItem('token');
         axios({
@@ -121,7 +131,7 @@ function ProductPage(props) {
                 })
             })
             .catch(err => {
-                toast.warning('Xóa sản phẩm thất bại!', {
+                toast.warning('Xóa sản phẩm thất bại!\n'+err.response?.data?.message ?? "", {
                     position: "top-right",
                     autoClose: 3000,
                     closeOnClick: true,
@@ -129,17 +139,21 @@ function ProductPage(props) {
                 })
             })
     }
+
     const handleChangePage = (indexPage) => {
         setPage({ ...page, page: indexPage.selected + 1 })
     }
+
     const handleChangeLimit = (limit) => {
         setPage({ ...page, limit })
     }
+
     const confirmDelete = (productId) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
             handleDeleteProduct(productId);
         }
     };
+
     return (
         <div className="wrapper-product">
             {isToggle === true ? <div className="modal-cu" onClick={handleCloseModal}>

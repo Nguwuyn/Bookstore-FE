@@ -37,19 +37,19 @@ function Navbar(props) {
         <div id="wrapper" style={{ height: '100%' }}>
             <ul className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${!toggleNavbar ? "toggled" : ""}`} id="accordionSidebar">
 
-                <Link className="sidebar-brand d-flex align-items-center justify-content-center" to="/product/list">
+                <Link className="sidebar-brand d-flex align-items-center justify-content-center" to="/dashboard">
                     <div className="sidebar-brand-icon rotate-n-15">
                         <i className="fas fa-laugh-wink"></i>
                     </div>
                     <div className="sidebar-brand-text mx-3">Book Shop <sup><i class="fas fa-book"></i></sup></div>
                 </Link>
 
-                <li className="nav-item active">
-                    <span className="nav-link" >
-                        <i className="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Trang home</span>
-                    </span>
-                </li>
+                {/* <li className="nav-item">
+                        <Link to="/Dashboard" className="nav-link collapsed" style={{ cursor: 'pointer', display: 'flex' }}>
+                        <i className="fas fa-dollar-sign"></i>
+                        <span>Dashboard</span>
+                        </Link>
+                </li> */}
                 <li className="nav-item" onClick={() => handleActive(1)}>
                     <span className="nav-link collapsed" style={{ display: 'flex', justifyContent: 'space-between', alignItems: "center", cursor: 'pointer' }}>
                         <span>
@@ -58,6 +58,7 @@ function Navbar(props) {
                         </span>
                         <i className="fas fa-chevron-right"></i>
                     </span>
+                    {/* Collapse để tạo hiệu ứng mở rộng, thu gọn cho các mục */}
                     <Collapse
                         isOpened={active1}
                     >
@@ -77,12 +78,6 @@ function Navbar(props) {
                         <span>Doanh thu</span>
                         </Link>
                 </li>
-                {/* <li className="nav-item">
-                        <Link to="/Dashboard" className="nav-link collapsed" style={{ cursor: 'pointer', display: 'flex' }}>
-                        <i className="fas fa-dollar-sign"></i>
-                        <span>Tester</span>
-                        </Link>
-                </li> */}
                 <li className="nav-item">
                     <Link to="/code" className="nav-link collapsed" style={{ cursor: "pointer", display: 'flex' }}>
                         <i class="fas fa-code"></i>
@@ -129,7 +124,7 @@ function Navbar(props) {
                     <Link to="/orders" className="nav-link collapsed" style={{ display: 'flex', justifyContent: 'space-between', alignItems: "center", cursor: 'pointer' }}>
                         <span style={{ cursor: "pointer" }}>
                             <i className="fas fa-book-open"></i>
-                            Đơn Hàng
+                            Đơn hàng
                         </span>
                     </Link>
                 </li>
@@ -145,7 +140,7 @@ function Navbar(props) {
                         <div id="collapsePages" className={`collapse ${active4 ? "show" : ''}`} >
                             <div className="bg-white py-2 collapse-inner rounded">
                                 <h6 className="collapse-header">Chi tiết tài khoản</h6>
-                                <Link to="/profile" className="collapse-item" >Profile</Link>
+                                <Link to="/profile" className="collapse-item" >Hồ sơ</Link>
                                 <span
                                     onClick={signOut}
                                     className="collapse-item" >Đăng xuất</span>

@@ -5,7 +5,7 @@ function Login(props) {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [passwordShow, setPasswordShow] = useState(false);
     const { handleLogin, isLoadingBtn } = props;
-    const checkRef = useRef();
+    const checkRef = useRef(); //để tham chiếu đến checkbox "Hiện mật khẩu"
     const onSubMitForm = (data) => {
         handleLogin(data);
     }
@@ -34,17 +34,14 @@ function Login(props) {
                                         <input
                                             type="text"
                                             className="form-control form-control-user"
-                                            id="exampleInputEmail"
-                                            aria-describedby="emailHelp"
                                             placeholder="Nhập tài khoản..."
-                                            {...register('email', { pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, required: true })} />
+                                            {...register('email', { pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-àáâãèéêìíòóôõùúăđĩũơưạ-ỹ]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, required: true })} />
                                         {errors.email && <span style={{ color: 'red' }}>Trường này phải là email</span>}
                                     </div>
                                     <div className="form-group">
                                         <input
                                             type={passwordShow ? 'text' : 'password'}
                                             className="form-control form-control-user"
-                                            id="exampleInputPassword"
                                             placeholder="Nhập mật khẩu..."
                                             {...register('password', { required: true })} />
                                         {errors.password && <span style={{ color: 'red' }}>Vui lòng nhập mật khẩu</span>}
@@ -62,6 +59,7 @@ function Login(props) {
                                     <button
                                         type="submit"
                                         className="btn btn-primary btn-user btn-block">
+                                        {/* Hiển thị biểu tượng tải (Spinners) khi đang xử lý đăng nhập */}
                                         {isLoadingBtn ? <Spinners /> : ''}
                                         Login
                                         </button>

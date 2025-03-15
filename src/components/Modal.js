@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Spinners from './Spinners';
+import { max } from 'lodash';
 
 function Modal(props) {
     const {
@@ -24,6 +25,9 @@ function Modal(props) {
         if (code.expirationDate) {
             setValue('expirationDate', new Date(code.expirationDate).toISOString().split('T')[0]);
         }
+        if (code.quantity) {
+            setValue('quantity', code.quantity);
+        }
     }, [code, setValue]);
 
     function isNaN(x) {
@@ -41,7 +45,7 @@ function Modal(props) {
             expirationDate: new Date(data.expirationDate).toISOString()
         };
 
-        const creationDate = new Date(code.creationDate);
+        const creationDate = code.creationDate ? new Date(code.creationDate) : new Date();
         const expirationDate = new Date(data.expirationDate);
 
         if (expirationDate <= creationDate) {
@@ -74,7 +78,8 @@ function Modal(props) {
                     code: code.code,
                     discount: code.discount,
                     type: type,
-                    expirationDate: formData.expirationDate // Update expiration date with form data
+                    expirationDate: formData.expirationDate,
+                    quantity: formData.quantity // Update quantity with form data
                 }, code._id, true);
             } else if (formData.code === "") {
                 formData.code = code.code;
@@ -125,9 +130,23 @@ function Modal(props) {
                                     type="text"
                                     className="form-control"
                                     defaultValue={code.code}
-                                    {...register('code', { required: false, minLength: 6 })}
+                                    {...register('code', {
+                                        required: "Code không được để trống",
+                                        minLength: {
+                                            value: 6,
+                                            message: "Tối thiểu 6 kí tự"
+                                        },
+                                        maxLength: {
+                                            value: 12,
+                                            message: "Tối đa 12 kí tự"
+                                        },
+                                        pattern: {
+                                            value: /^[a-zA-Z0-9]*$/,
+                                            message: "Code không được chứa kí tự đặc biệt"
+                                        }
+                                    })}
                                 />
-                                {errors.code && <span style={{ color: 'red' }}>Tối thiểu 6 kí tự</span>}
+                                {errors.code && <span style={{ color: 'red' }}>{errors.code.message}</span>}
                             </div>
                             <div className="form-group">
                                 <label className="col-form-label">Discount</label>
@@ -156,8 +175,18 @@ function Modal(props) {
                                     onChange={onChangeType}
                                 >
                                     <option selected={code.type === "%"} value="%">%</option>
-                                    <option selected={code.type === "đ"} value="đ">đ</option>
+                                    {/* <option selected={code.type === "đ"} value="đ">đ</option> */}
                                 </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="col-form-label">Số lượng</label>
+                                <input
+                                    type="number"
+                                    {...register('quantity', { required: true, min: 1,max: 100 })}
+                                    defaultValue={code.quantity}
+                                    className="form-control"
+                                />
+                                {errors.quantity && <span style={{ color: 'red' }}>{errors.quantity.message}</span>}
                             </div>
                             <div className="modal-footer">
                                 <button type="submit" className="btn btn-primary">

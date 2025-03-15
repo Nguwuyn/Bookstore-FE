@@ -8,7 +8,7 @@ function Profile(props) {
             <div class="main-body">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Profile</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Hồ sơ</h6>
                     </div>
                 </div>
                 <div class="row gutters-sm">
@@ -31,7 +31,7 @@ function Profile(props) {
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <h6 class="mb-0">Full Name</h6>
+                                        <h6 class="mb-0">Tên đầy dủ</h6>
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         {`${profile.firstName} ${profile.lastName}`}
@@ -49,7 +49,7 @@ function Profile(props) {
                                 <hr />
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <h6 class="mb-0">Phone</h6>
+                                        <h6 class="mb-0">SĐT</h6>
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         (84) {profile.phone}
@@ -67,7 +67,7 @@ function Profile(props) {
                                 <hr />
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <h6 class="mb-0">Address</h6>
+                                        <h6 class="mb-0">Địa chỉ</h6>
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         {profile.address ? profile.address : "Chưa cập nhật"}
@@ -76,7 +76,7 @@ function Profile(props) {
                                 <hr />
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <Link class="btn btn-info " to="/profile/edit">Edit</Link>
+                                        <Link class="btn btn-info " to="/profile/edit">Sửa</Link>
                                     </div>
                                 </div>
                             </div>

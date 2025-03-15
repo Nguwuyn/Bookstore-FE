@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Loading from '../../components/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { URL_API } from '../../constants/config';
-import { deleteOneUser, GetAllUser } from '../../action/index';
+import { deleteOneUser, GetAllUser, setTotalUsers } from '../../action/index';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import ModalUser from '../../components/ModalUser';
+
 function ListUserPage(props) {
     const dispatch = useDispatch();
     const [totalPage, setTotalPage] = useState(null);
@@ -16,9 +18,15 @@ function ListUserPage(props) {
         page: 1,
         limit: 5
     });
+    const [openModal, setOpenModal] = useState(false);
+    const [titleModal, setTitleModal] = useState('Sửa');
+    const [loadingBtn, setLoadingBtn] = useState(false);
+    const [user, setUser] = useState({});
+
     const onchangeInputSearch = (e) => {
         setKeyWord(e.target.value);
     }
+
     const onSubmitKeyWordSearch = (e) => {
         setIsLoadingPage(true);
         e.preventDefault();
@@ -33,16 +41,20 @@ function ListUserPage(props) {
             .then(data => {
                 setIsLoadingPage(false);
                 dispatch(GetAllUser(data.user))
+                dispatch(setTotalUsers(data.user.length));
             })
             .catch(err => {
                 console.log(err);
             })
     }
+
     const role = ['admin', 'user'];
+
     const onChangeSelect = (e) => {
         let value = e.target.value;
         handleChangeLimit(value);
     }
+
     function fetchAllUsers() {
         setIsLoadingPage(true);
         const config = {
@@ -52,18 +64,24 @@ function ListUserPage(props) {
         axios(config)
             .then(res => res.data)
             .then(data => {
-                console.log(data)
+                // console.log(data)
                 setIsLoadingPage(false);
                 setTotalPage(data.totalPage);
                 dispatch(GetAllUser(data.users));
             })
+            .catch(err => {
+                setIsLoadingPage(false);
+                console.log(err);
+            });
     }
+
     useEffect(() => {
         fetchAllUsers();
         return () => {
             dispatch(GetAllUser([]));
         };
     }, [page])
+
     const handleDeleteUser = (id) => {
         const token = sessionStorage.getItem('token');
         axios({
@@ -79,7 +97,8 @@ function ListUserPage(props) {
                     autoClose: 3000,
                     closeOnClick: true,
                     pauseOnHover: true
-                })
+                });
+                dispatch(setTotalUsers(users.length - 1));
             })
             .catch(err => {
                 toast.warning('Xóa tài khoản thất bại!', {
@@ -90,12 +109,58 @@ function ListUserPage(props) {
                 })
             })
     }
+
+    const handleEditUser = (id) => {
+        axios.get(`${URL_API}/user/${id}`)
+            .then(res => res.data)
+            .then(data => {
+                setUser(data.user);
+                setOpenModal(true);
+                setTitleModal('Sửa');
+            })
+    }
+
+    const handleSubmitEditUser = (data, id) => {
+        setLoadingBtn(true);
+        axios({
+            url: `${URL_API}/user/${id}`,
+            method: "PUT", // Sử dụng phương thức PUT để cập nhật người dùng
+            data: data,
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem('token')}`
+            }
+        })
+            .then(res => res.data)
+            .then(data => {
+                setOpenModal(false);
+                fetchAllUsers();
+                setLoadingBtn(false);
+                toast.success('Cập nhật người dùng thành công!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                });
+            })
+            .catch(err => {
+                setLoadingBtn(false);
+                toast.error('Cập nhật người dùng thất bại!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                });
+            });
+    }
+
     const handleChangePage = (indexPage) => {
         setPage({ ...page, page: indexPage.selected + 1 })
     }
+
     const handleChangeLimit = (limit) => {
         setPage({ ...page, limit })
     }
+
     const onChangeRole = (e, id) => {
         axios({
             method: "POST",
@@ -111,11 +176,35 @@ function ListUserPage(props) {
                 console.log(data);
             })
     }
-    const confirmDelete = (userId) => {
-        userId = users._id;
-        if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này không?")) {
-            handleDeleteUser(users._id);
-        }
+
+    const onChangeStatus = (e, id) => {
+        axios({
+            method: "POST",
+            url: `${URL_API}/user/update-status`,
+            data: {
+                status: e.target.value,
+                userID: id
+            },
+            headers: { "Authorization": `Bearer ${sessionStorage.getItem('token')}` }
+        })
+        .then(res => {
+            if (res.data.status === "success") {
+                toast.success('Cập nhật trạng thái thành công!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                });
+            }
+        })
+        .catch(err => {
+            toast.warning('Cập nhật trạng thái thất bại!', {
+                position: "top-right",
+                autoClose: 3000,
+                closeOnClick: true,
+                pauseOnHover: true
+            });
+        });
     };
     return (
         <div className="wrapper-product">
@@ -144,6 +233,15 @@ function ListUserPage(props) {
                     </div>
                 </div>
             </div>
+            <ModalUser
+                openModal={openModal}
+                handleToggleModal={setOpenModal}
+                titleModal={titleModal}
+                user={user}
+                loadingBtn={loadingBtn}
+                handleSubmitEditUser={handleSubmitEditUser}
+                
+            />
             <div class="card-body m-0 pt-0">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
@@ -152,6 +250,7 @@ function ListUserPage(props) {
                                 <th className="text-center">STT</th>
                                 <th className="text-center">Email</th>
                                 <th className="text-center">Họ Tên</th>
+                                <th className="text-center">Trạng thái</th>
                                 <th className="text-center">Quyền</th>
                                 <th className="text-center">Số Điện Thoại</th>
                                 <th className="text-center">Ngày tạo</th>
@@ -166,6 +265,14 @@ function ListUserPage(props) {
                                         <td className="text-center">{user.email}</td>
                                         <td className="text-center">{`${user.firstName} ${user.lastName}`}</td>
                                         <td className="text-center">
+                                        <select
+                                            onChange={(e) => onChangeStatus(e, user._id)} // Thêm sự kiện onChange
+                                            className="select-cus">
+                                            <option value="hoạt động" selected={user.status === "hoạt động"}>Hoạt động</option>
+                                            <option value="không hoạt động" selected={user.status === "không hoạt động"}>Không hoạt động</option>
+                                        </select>
+                                        </td>
+                                        <td className="text-center">
                                             <select
                                                 onChange={(e) => onChangeRole(e, user._id)}
                                                 className="select-cus">
@@ -178,7 +285,10 @@ function ListUserPage(props) {
                                         <td className="text-center">{new Date(user.createdAt).toLocaleDateString()}</td>
                                         <td className="text-center">
                                             <button
-                                                onClick={() => confirmDelete(user._id)}
+                                                onClick={() => handleEditUser(user._id)}
+                                                className="btn btn-primary"><i class="fas fa-pen-square"></i></button>
+                                            <button
+                                                onClick={() => handleDeleteUser(user._id)}
                                                 className="btn btn-warning"><i class="far fa-trash-alt"></i></button>
                                         </td>
                                     </tr>

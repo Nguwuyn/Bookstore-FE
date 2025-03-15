@@ -7,6 +7,8 @@ import { setUser } from '../../action/index';
 import axios from 'axios';
 import Loading from '../../components/Loading';
 import Spinners from '../../components/Spinners';
+import { useForm } from 'react-hook-form';
+
 function EditProfile(props) {
     const history = useHistory();
     const dispatch = useDispatch();
@@ -23,11 +25,13 @@ function EditProfile(props) {
     const [data, setData] = useState({
         firstName: "",
         lastName: "",
-        phone: NaN,
+        phone: "",
         address: "",
         role: "",
         image: ""
     })
+    const { formState: { errors } } = useForm();
+
     const onChangePassword = (e) => {
         setPassword({ ...password, [e.target.name]: e.target.value });
     }
@@ -57,7 +61,19 @@ function EditProfile(props) {
     }, [])
 
     const handleOnchangeForm = (e) => {
-        setData({ ...data, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        if (name === 'phone') {
+            const phonePattern = /^[0-9]*$/;
+            if (!phonePattern.test(value)) {
+                return; // Không cập nhật state nếu giá trị không hợp lệ
+            }
+        }
+
+        setData({
+            ...data,
+            [name]: value
+        });
     }
     const handleSubmitForm = () => {
         if (isChangePassword) {
@@ -71,6 +87,18 @@ function EditProfile(props) {
                 return;
             }
         }
+
+        // Kiểm tra số điện thoại
+        const phonePattern = /^[0-9]{10}$/;
+        if (!phonePattern.test(data.phone)) {
+            toast.error('Số điện thoại không hợp lệ', {
+                position: 'top-right',
+                autoClose: 3000,
+                closeButton: true
+            });
+            return;
+        }
+
         setIsLoadingBtn(true);
         const dataUser = new FormData();
         dataUser.append('user', JSON.stringify(data))
@@ -119,7 +147,7 @@ function EditProfile(props) {
             <div className="main-body">
                 <div className="card shadow mb-4">
                     <div className="card-header py-3">
-                        <h6 className="m-0 font-weight-bold text-primary">Edit Profile</h6>
+                        <h6 className="m-0 font-weight-bold text-primary">Chỉnh sửa hồ sơ</h6>
                     </div>
                 </div>
                 {isLoading ? <div className="row">
@@ -151,7 +179,7 @@ function EditProfile(props) {
                             <div className="card-body">
                                 <div className="row mb-3">
                                     <div className="col-sm-3">
-                                        <h6 className="mb-0">Frist Name</h6>
+                                        <h6 className="mb-0">Họ</h6>
                                     </div>
                                     <div className="col-sm-9 text-secondary">
                                         <input type="text" className="form-control" name="firstName" onChange={handleOnchangeForm} value={data.firstName} />
@@ -159,7 +187,7 @@ function EditProfile(props) {
                                 </div>
                                 <div className="row mb-3">
                                     <div className="col-sm-3">
-                                        <h6 className="mb-0">Last Name</h6>
+                                        <h6 className="mb-0">Tên</h6>
                                     </div>
                                     <div className="col-sm-9 text-secondary">
                                         <input type="text" className="form-control" name="lastName" onChange={handleOnchangeForm} value={data.lastName} />
@@ -167,15 +195,22 @@ function EditProfile(props) {
                                 </div>
                                 <div className="row mb-3">
                                     <div className="col-sm-3">
-                                        <h6 className="mb-0">Phone</h6>
+                                        <h6 className="mb-0">SĐT</h6>
                                     </div>
                                     <div className="col-sm-9 text-secondary">
-                                        <input type="text" className="form-control" onChange={handleOnchangeForm} value={data.phone} name="phone" />
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={handleOnchangeForm}
+                                            value={data.phone}
+                                            name="phone"
+                                        />
+                                        {errors.phone && <span style={{ color: 'red' }}>{errors.phone.message}</span>}
                                     </div>
                                 </div>
                                 <div className="row mb-3">
                                     <div className="col-sm-3">
-                                        <h6 className="mb-0">Address</h6>
+                                        <h6 className="mb-0">Địa chỉ</h6>
                                     </div>
                                     <div className="col-sm-9 text-secondary">
                                         <input type="text" className="form-control" name="address" onChange={handleOnchangeForm} value={data.address} />

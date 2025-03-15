@@ -380,8 +380,8 @@ hr {
 }
 .small,
 small {
-    font-size: 80%;
-    font-weight: 400;
+    font-size: 100%;
+    font-weight: bold;
 }
 .mark,
 mark {
@@ -1430,31 +1430,33 @@ pre code {
 .table {
     width: 100%;
     margin-bottom: 1rem;
-    color: #858796;
+    color: black;
+    font-weight: 900;
+    font-size: 17px;
 }
 .table td,
 .table th {
     padding: 0.75rem;
     vertical-align: top;
-    border-top: 1px solid #e3e6f0;
+    border-top: 3px solid #1342dc;
 }
 .table thead th {
     vertical-align: bottom;
-    border-bottom: 2px solid #e3e6f0;
+    border-bottom: 3px solid #1342dc;
 }
 .table tbody + tbody {
-    border-top: 2px solid #e3e6f0;
+    border-top: 3px solid #1342dc;
 }
 .table-sm td,
 .table-sm th {
     padding: 0.3rem;
-}
+}   
 .table-bordered {
-    border: 1px solid #e3e6f0;
+    border: 3px solid #1342dc;
 }
 .table-bordered td,
 .table-bordered th {
-    border: 1px solid #e3e6f0;
+    border: 3px solid #1342dc;
 }
 .table-bordered thead td,
 .table-bordered thead th {
@@ -4110,6 +4112,7 @@ input[type="submit"].btn-block {
     flex: 1 1 auto;
     min-height: 1px;
     padding: 1.25rem;
+    font-weight: bold;
 }
 .card-title {
     margin-bottom: 0.75rem;

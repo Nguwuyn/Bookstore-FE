@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { URL_API } from '../../constants/config';
 import Modal from '../../components/Modal';
 import { toast } from 'react-toastify';
+
 function CodePage(props) {
     const [listCode, setListCode] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [titleModal, setTitleModal] = useState('Thêm');
     const [loadingBtn, setLoadingBtn] = useState(false);
     const [code, setCode] = useState({});
+
     function fetchAllCode() {
         axios.get(`${URL_API}/code`)
             .then(res => res.data)
@@ -16,14 +18,17 @@ function CodePage(props) {
                 setListCode(data.code);
             })
     }
+
     const handleToggleModal = (bool, label) => {
         setOpenModal(bool);
         setTitleModal(label);
         setCode({})
     }
+
     useEffect(() => {
         fetchAllCode();
     }, [])
+
     const handleEditCode = (id, label) => {
         axios.get(`${URL_API}/code/${id}`)
             .then(res => res.data)
@@ -33,6 +38,7 @@ function CodePage(props) {
                 setTitleModal(label);
             })
     }
+
     const handleSubmitEditCode = (data, id) => {
         setLoadingBtn(true);
         axios({
@@ -49,7 +55,16 @@ function CodePage(props) {
                 fetchAllCode();
                 setLoadingBtn(false);
             })
+            .catch(err=>{
+                toast.error(err.response?.data?.message ??'Cập nhật mã giảm giá thất bại!' , {
+                    position: "top-right",
+                    autoClose: 3000,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                })
+            })
     }
+
     const handleDeleteCode = (id) => {
         axios({
             url: `${URL_API}/code/${id}`,
@@ -68,7 +83,16 @@ function CodePage(props) {
                 })
                 fetchAllCode();
             })
+            .catch(err=>{
+                toast.error("Voucher đã được sử dụng. Không xóa được !", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                })
+            })
     }
+
     const handleAddCode = (data) => {
         axios({
             url: `${URL_API}/code`,
@@ -81,7 +105,7 @@ function CodePage(props) {
             .then(res => res.data)
             .then(data => {
                 if (data.status === "success") {
-                    fetchAllCode();
+                    fetchAllCode(); // Cập nhật danh sách mã giảm giá sau khi thêm
                     toast.success('Thêm mã giảm giá thành công!', {
                         position: "top-right",
                         autoClose: 3000,
@@ -98,13 +122,22 @@ function CodePage(props) {
                     })
                 }
             })
+            .catch(err=>{
+                toast.error(err.response?.data?.messenger ??'Thêm mã giảm giá thất bại!' , {
+                    position: "top-right",
+                    autoClose: 3000,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                })
+            })
     }
+
     const confirmDelete = (codeId) => {
-        
         if (window.confirm("Bạn có chắc chắn muốn xóa mã giảm giá này không?")) {
             handleDeleteCode(codeId);
         }
     };
+
     return (
         <div>
             {openModal === true ? <div className="modal-cu" onClick={() => handleToggleModal(false)}>
@@ -118,7 +151,7 @@ function CodePage(props) {
                 <div className="justify-content-between" style={{ display: 'flex' }}>
                     <button className="btn btn-success btn-cus" onClick={() => handleToggleModal(true, "Thêm")}>
                         <i class="fas fa-plus-circle"></i>
-                                    Thêm
+                        Thêm
                     </button>
                     <div className="result-product">
                         <span>Result :</span>
@@ -150,6 +183,7 @@ function CodePage(props) {
                                 <th className="text-center">Giảm giá</th>
                                 <th className="text-center">Ngày tạo</th>
                                 <th className="text-center">Thời hạn</th>
+                                <th className="text-center">Số lượng</th> {/* Thêm cột "Số lượng" */}
                                 <th className="text-center">Sửa</th>
                                 <th className="text-center">Xóa</th>
                             </tr>
@@ -167,6 +201,7 @@ function CodePage(props) {
                                         <td className="text-center">{`${code.discount} (${code.type})`}</td>
                                         <td className="text-center">{createdAt.toLocaleDateString()}</td>
                                         <td className="text-center">{expirationDateString}</td>
+                                        <td className="text-center">{code.quantity}</td> {/* Hiển thị giá trị "Số lượng" */}
                                         <td className="text-center">
                                             <span className="icon-code" onClick={() => handleEditCode(code._id, 'Sửa')}>
                                                 <i className="fas fa-edit"></i>
